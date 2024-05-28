@@ -59,5 +59,14 @@ For more info see: https://docs.hcaptcha.com/faq
 * Issues: https://github.com/dreistromland/typo3-ext-hcaptcha
 * Slack: #typo3-cms
 
-Visit our [website](https://waldhacker.dev)
+Visit our [website](https://dreistrom.land)
  or read [Susi's blog entry about hCaptcha at susi.dev](https://susi.dev/hcaptcha).
+
+### Migration from `waldhacker/hcaptcha` 2.x to `dreistromland/typo3-hcaptcha` 2.x
+
+[dreistrom.land AG](https://dreistrom.land) has taken over the maintenance of the extension. In this context, the package namespace was changed from `waldhacker/hcaptcha` to `dreistromland/typo3-hcaptcha`.
+To migrate your project to the new namespace, do something like this:
+
+```
+composer rem waldhacker/hcaptcha && composer req dreistromland/typo3-hcaptcha:^2.0
+```
