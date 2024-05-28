@@ -33,7 +33,7 @@ TYPO3 Extension to add hCaptcha to EXT:form - The privacy friendly captcha alter
    hCaptcha - the privacy friendly Google reCaptcha alternative
 
 If you find an error or something is missing, please:
-`Report a Problem <https://github.com/waldhacker/ext-hcaptcha/issues>`__
+`Report a Problem <https://github.com/dreistromland/typo3-ext-hcaptcha/issues>`__
 
 You are welcome to help improve this guide.
 Just click on "Edit me on GitHub" on the top right to submit your change request.

@@ -1,6 +1,6 @@
 # TYPO3 Extension to add hCaptcha to EXT:form - The privacy friendly captcha alternative.
 
-[![ci](https://github.com/waldhacker/ext-hcaptcha/actions/workflows/ci.yml/badge.svg)](https://github.com/waldhacker/ext-hcaptcha/actions/workflows/ci.yml)
+[![ci](https://github.com/dreistromland/typo3-ext-hcaptcha/actions/workflows/ci.yml/badge.svg)](https://github.com/dreistromland/typo3-ext-hcaptcha/actions/workflows/ci.yml)
 [![phpstan](https://img.shields.io/badge/PHPStan-lvl%20max-blueviolet)](https://phpstan.org/)
 
 Provides [hCaptcha](https://hcaptcha.com) integration for TYPO3 EXT:form.
@@ -56,7 +56,7 @@ For more info see: https://docs.hcaptcha.com/faq
 
 ### Help & Support
 
-* Issues: https://github.com/waldhacker/ext-hcaptcha
+* Issues: https://github.com/dreistromland/typo3-ext-hcaptcha
 * Slack: #typo3-cms
 
 Visit our [website](https://waldhacker.dev)
