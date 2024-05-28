@@ -14,12 +14,13 @@ TYPO3 Extension to add hCaptcha to EXT:form - The privacy friendly captcha alter
 
 :Authors:
    waldhacker UG (haftungsbeschränkt)
+   dreistrom.land AG
 
 :Email:
-   hello@waldhacker.dev
+   hello@dreistrom.land
 
 :Website:
-   https://waldhacker.dev
+   https://dreistrom.land
 
 :License:
    This extension documentation is published under the
