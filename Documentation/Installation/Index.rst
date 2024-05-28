@@ -10,7 +10,7 @@ Installation
 
 .. code::
 
-   composer require waldhacker/hcaptcha
+   composer require dreistromland/typo3-hcaptcha
 
 - Activate the extension in the TYPO3 Extension Manager (TER Version)
 
