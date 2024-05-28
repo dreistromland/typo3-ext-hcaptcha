@@ -1,17 +1,23 @@
 {
-    "name": "waldhacker/hcaptcha",
+    "name": "dreistromland/typo3-hcaptcha",
     "type": "typo3-cms-extension",
     "description": "TYPO3 Extension to add hCaptcha to EXT:form - The privacy friendly captcha alternative.",
     "license": ["GPL-2.0-or-later"],
-    "homepage": "https://github.com/waldhacker/ext-hcaptcha",
+    "homepage": "https://github.com/dreistromland/typo3-ext-hcaptcha",
     "support": {
-        "issues": "https://github.com/waldhacker/ext-hcaptcha/issues"
+        "issues": "https://github.com/dreistromland/typo3-ext-hcaptcha/issues"
     },
     "authors": [
         {
             "name": "waldhacker",
             "email": "hello@waldhacker.dev",
             "homepage": "https://waldhacker.dev",
+            "role": "Developer"
+        },
+        {
+            "name": "dreistrom.land AG",
+            "email": "hello@dreistrom.land",
+            "homepage": "https://dreistrom.land",
             "role": "Developer"
         }
     ],
