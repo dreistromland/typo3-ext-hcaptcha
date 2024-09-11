@@ -50,7 +50,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Waldhacker\\Hcaptcha\\": "Classes/",
+            "Waldhacker\\Hcaptcha\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "Waldhacker\\Hcaptcha\\Tests\\": "Tests/"
         }
     },
