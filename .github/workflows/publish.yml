@@ -7,12 +7,12 @@ jobs:
   publish:
     name: Publish new version to TER
     if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       TYPO3_API_TOKEN: ${{ secrets.TYPO3_API_TOKEN }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Check tag
         run: |
@@ -22,23 +22,23 @@ jobs:
 
       - name: Get version
         id: get-version
-        run: echo ::set-output name=version::${GITHUB_REF/refs\/tags\//}
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
 
       - name: Get comment
         id: get-comment
         run: |
-          readonly local comment=$(git tag -n10 -l ${{ steps.get-version.outputs.version }} | sed "s/^[0-9.]*[ ]*//g")
+          readonly local comment=$(git tag -n10 -l ${{ steps.get-version.outputs.VERSION }} | sed "s/^[0-9.]*[ ]*//g")
 
           if [[ -z "${comment// }" ]]; then
-            echo ::set-output name=comment::Released version ${{ steps.get-version.outputs.version }} of ${{ env.TYPO3_EXTENSION_KEY }}
+            echo "COMMENT=Released version ${{ steps.get-version.outputs.VERSION }} of ${{ env.TYPO3_EXTENSION_KEY }}" >> $GITHUB_OUTPUT
           else
-            echo ::set-output name=comment::$comment
+            echo "COMMENT=$comment" >> $GITHUB_OUTPUT
           fi
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.2
           extensions: intl, mbstring, json, zip, curl
           tools: composer:v2
 
@@ -46,4 +46,4 @@ jobs:
         run: composer global require typo3/tailor --prefer-dist --no-progress --no-suggest
 
       - name: Publish to TER
-        run: php ~/.composer/vendor/bin/tailor ter:publish --comment "${{ steps.get-comment.outputs.comment }}" ${{ steps.get-version.outputs.version }}
+        run: php ~/.composer/vendor/bin/tailor ter:publish --comment "${{ steps.get-comment.outputs.COMMENT }}" ${{ steps.get-version.outputs.VERSION }}

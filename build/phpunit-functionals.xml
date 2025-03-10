@@ -10,6 +10,7 @@
          requireCoverageMetadata="false"
          beStrictAboutCoverageMetadata="true"
          displayDetailsOnTestsThatTriggerWarnings="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
 >
   <testsuites>
     <testsuite name="default">
