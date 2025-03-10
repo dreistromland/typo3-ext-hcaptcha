@@ -1,17 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.14.1@b9d355e0829c397b9b3b47d0c0ed042a8a70284d">
+<files psalm-version="6.8.8@1361cd33008feb3ae2b4a93f1860e14e538ec8c2">
+  <file src="Classes/Event/TranslateErrorMessageEvent.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[getErrorCode]]></code>
+      <code><![CDATA[setMessage]]></code>
+    </PossiblyUnusedMethod>
+  </file>
   <file src="Classes/Service/ConfigurationService.php">
     <InternalClass>
-      <code>ConfigurationManager::CONFIGURATION_TYPE_SETTINGS</code>
-      <code>ServerRequestFactory::fromGlobals()</code>
-      <code>new Uri($apiScript)</code>
+      <code><![CDATA[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]]></code>
+      <code><![CDATA[ServerRequestFactory::fromGlobals()]]></code>
+      <code><![CDATA[new Uri($apiScript)]]></code>
     </InternalClass>
     <InternalMethod>
-      <code>ServerRequestFactory::fromGlobals()</code>
-      <code>getConfiguration</code>
-      <code>getQuery</code>
-      <code>new Uri($apiScript)</code>
-      <code>withQuery</code>
+      <code><![CDATA[ServerRequestFactory::fromGlobals()]]></code>
+      <code><![CDATA[getConfiguration]]></code>
+      <code><![CDATA[getQuery]]></code>
+      <code><![CDATA[new Uri($apiScript)]]></code>
+      <code><![CDATA[withQuery]]></code>
     </InternalMethod>
+    <PossiblyUnusedMethod>
+      <code><![CDATA[__construct]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="Classes/Validation/HcaptchaValidator.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function isValid($value): void]]></code>
+      <code><![CDATA[protected function translateErrorMessage(string $translateKey, string $extensionName = '', array $arguments = []): string]]></code>
+    </MissingOverrideAttribute>
+    <UnnecessaryVarAnnotation>
+      <code><![CDATA[ConfigurationService]]></code>
+      <code><![CDATA[RequestFactory]]></code>
+    </UnnecessaryVarAnnotation>
+    <UnusedClass>
+      <code><![CDATA[HcaptchaValidator]]></code>
+    </UnusedClass>
+  </file>
+  <file src="Classes/ViewHelpers/Forms/HcaptchaViewHelper.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function render(): string]]></code>
+    </MissingOverrideAttribute>
+    <UnusedClass>
+      <code><![CDATA[HcaptchaViewHelper]]></code>
+    </UnusedClass>
   </file>
 </files>

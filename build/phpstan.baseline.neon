@@ -1,16 +1,2 @@
 parameters:
-	ignoreErrors:
-		-
-			message: "#^Method Waldhacker\\\\Hcaptcha\\\\Validation\\\\HcaptchaValidator\\:\\:translateErrorMessage\\(\\) has parameter \\$arguments with no type specified\\.$#"
-			count: 1
-			path: ../Classes/Validation/HcaptchaValidator.php
-
-		-
-			message: "#^Method Waldhacker\\\\Hcaptcha\\\\Validation\\\\HcaptchaValidator\\:\\:translateErrorMessage\\(\\) has parameter \\$extensionName with no type specified\\.$#"
-			count: 1
-			path: ../Classes/Validation/HcaptchaValidator.php
-
-		-
-			message: "#^Method Waldhacker\\\\Hcaptcha\\\\Validation\\\\HcaptchaValidator\\:\\:translateErrorMessage\\(\\) has parameter \\$translateKey with no type specified\\.$#"
-			count: 1
-			path: ../Classes/Validation/HcaptchaValidator.php
+	ignoreErrors: []
