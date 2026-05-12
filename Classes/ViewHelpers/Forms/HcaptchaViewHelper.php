@@ -22,7 +22,6 @@ use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Form\Domain\Runtime\FormRuntime;
 use TYPO3\CMS\Form\ViewHelpers\RenderRenderableViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use Waldhacker\Hcaptcha\Service\ConfigurationService;
 
 /**
@@ -30,8 +29,6 @@ use Waldhacker\Hcaptcha\Service\ConfigurationService;
  */
 class HcaptchaViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
-
     protected $escapeOutput = false;
 
     /**

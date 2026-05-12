@@ -24,11 +24,11 @@
     "prefer-stable": true,
     "minimum-stability": "dev",
     "require": {
-        "php": "^7.2 | ^8.0 | ^8.1 | ^8.2 | ^8.3",
+        "php": "^7.2 | ^8.0 | ^8.1 | ^8.2 | ^8.3 | ^8.4",
         "ext-json": "*",
-        "typo3/cms-extbase": "^10.4@dev || ^11.5@dev || ^12.4@dev || ^13.4@dev",
-        "typo3/cms-fluid": "^10.4@dev || ^11.5@dev || ^12.4@dev || ^13.4@dev",
-        "typo3/cms-form": "^10.4@dev || ^11.5@dev || ^12.4@dev || ^13.4@dev"
+        "typo3/cms-extbase": "^11.5@dev || ^12.4@dev || ^13.4@dev || ^14.3@dev",
+        "typo3/cms-fluid": "^11.5@dev || ^12.4@dev || ^13.4@dev || ^14.3@dev",
+        "typo3/cms-form": "^11.5@dev || ^12.4@dev || ^13.4@dev || ^14.3@dev"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.16 | ^3.13",
@@ -38,9 +38,9 @@
         "phpunit/phpunit": "^9.4 || ^10.5",
         "roave/security-advisories": "dev-latest",
         "saschaegerer/phpstan-typo3": "^1.8",
-        "typo3/cms-fluid-styled-content": "^10.4@dev || ^11.5@dev || ^12.4@dev || ^13.4@dev",
+        "typo3/cms-fluid-styled-content": "^11.5@dev || ^12.4@dev || ^13.4@dev || ^14.3@dev",
         "typo3/coding-standards": "^0.3 | ^0.5",
-        "typo3/cms-install": "^10.4@dev || ^11.5@dev || ^12.4@dev || ^13.4@dev",
+        "typo3/cms-install": "^11.5@dev || ^12.4@dev || ^13.4@dev || ^14.3@dev",
         "typo3/testing-framework": "^7.x-dev || ^8",
         "vimeo/psalm": "^3.0 | ^4.0 | ^5.0 | ^6.0",
         "zbateson/mail-mime-parser": "^2.0"
