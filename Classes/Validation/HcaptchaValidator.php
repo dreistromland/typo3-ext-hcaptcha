@@ -18,18 +18,23 @@ declare(strict_types=1);
 
 namespace Waldhacker\Hcaptcha\Validation;
 
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
 use Waldhacker\Hcaptcha\Event\TranslateErrorMessageEvent;
 use Waldhacker\Hcaptcha\Service\ConfigurationService;
 
-class HcaptchaValidator extends AbstractValidator
+class HcaptchaValidator extends AbstractValidator implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     protected $acceptsEmptyValues = false;
 
     /**
@@ -94,20 +99,36 @@ class HcaptchaValidator extends AbstractValidator
             $ip = $normalizedParams->getRemoteAddress();
         }
 
-        $url = HttpUtility::buildUrl(
-            [
-                'host' => $this->getConfigurationService()->getVerificationServer(),
-                'query' => \http_build_query(
-                    [
+        // Send the secret in the request body, never in the URL: request URLs end up in exception
+        // messages, proxy logs and monitoring, which would expose the secret.
+        try {
+            $response = $this->getRequestFactory()->request(
+                $this->getConfigurationService()->getVerificationServer(),
+                'POST',
+                [
+                    'form_params' => [
                         'secret' => $this->getConfigurationService()->getPrivateKey(),
                         'response' => $hcaptchaFormFieldValue,
                         'remoteip' => $ip,
+                    ],
+                ]
+            );
+        } catch (GuzzleException $exception) {
+            // A failed request must not break the form; it fails the validation instead. Log neither
+            // the exception message nor the request: both carry request details.
+            if ($this->logger !== null) {
+                $failedResponse = $exception instanceof RequestException ? $exception->getResponse() : null;
+                $this->logger->error(
+                    'hCaptcha siteverify request failed',
+                    [
+                        'exceptionClass' => get_class($exception),
+                        'code' => $exception->getCode(),
+                        'status' => $failedResponse !== null ? $failedResponse->getStatusCode() : null,
                     ]
-                ),
-            ]
-        );
-
-        $response = $this->getRequestFactory()->request($url, 'POST');
+                );
+            }
+            return [];
+        }
 
         $body = (string)$response->getBody();
         $responseArray = json_decode($body, true);

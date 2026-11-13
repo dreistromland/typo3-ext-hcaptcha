@@ -18,12 +18,15 @@ declare(strict_types=1);
 
 namespace Waldhacker\Hcaptcha\Tests\Unit\Validation;
 
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -145,8 +148,71 @@ class HcaptchaValidatorTest extends TestCase
         $result = $subject->validate(1);
         $errors = $result->getErrors();
 
-        $requestFactory->request('https://example.com/siteverify?secret=my_superb_key&response=verification-key-response&remoteip=127.0.0.1', 'POST')->shouldHaveBeenCalled();
+        $requestFactory->request(
+            'https://example.com/siteverify',
+            'POST',
+            [
+                'form_params' => [
+                    'secret' => 'my_superb_key',
+                    'response' => 'verification-key-response',
+                    'remoteip' => '127.0.0.1',
+                ],
+            ]
+        )->shouldHaveBeenCalled();
         self::assertCount(1, $errors);
         self::assertSame($expectedErrorCode, $errors[0]->getCode());
+    }
+
+    /**
+     * @test
+     * @covers ::validate
+     * @covers ::isValid
+     * @covers ::validateHcaptcha
+     * @covers ::getConfigurationService
+     * @covers ::getRequestFactory
+     */
+    public function validateReturnsErrorAndLogsWithoutSecretIfVerificationRequestFails(): void
+    {
+        $subject = $this->getMockBuilder(HcaptchaValidator::class)
+            ->onlyMethods(['translateErrorMessage'])
+            ->getMock();
+        $logger = $this->prophesize(LoggerInterface::class);
+        $subject->setLogger($logger->reveal());
+
+        $requestFactory = $this->prophesize(RequestFactory::class);
+        GeneralUtility::addInstance(RequestFactory::class, $requestFactory->reveal());
+        $normalizedParams = $this->prophesize(NormalizedParams::class);
+        $configurationService = $this->prophesize(ConfigurationService::class);
+        GeneralUtility::addInstance(ConfigurationService::class, $configurationService->reveal());
+        $this->typo3request->getAttribute('normalizedParams')->willReturn($normalizedParams->reveal());
+
+        $normalizedParams->getRemoteAddress()->willReturn('127.0.0.1');
+        $this->typo3request->getParsedBody()->willReturn([
+            'h-captcha-response' => 'verification-key-response',
+        ]);
+
+        $configurationService->getVerificationServer()->willReturn('https://example.com/siteverify');
+        $configurationService->getPrivateKey()->willReturn('my_superb_key');
+
+        $requestFactory->request(Argument::cetera())->willThrow(
+            new ConnectException(
+                'cURL error 6: Could not resolve host for https://example.com/siteverify?secret=my_superb_key',
+                new Request('POST', 'https://example.com/siteverify?secret=my_superb_key')
+            )
+        );
+
+        $result = $subject->validate(1);
+        $errors = $result->getErrors();
+
+        self::assertCount(1, $errors);
+        self::assertSame(1637268462, $errors[0]->getCode());
+        $logger->error(
+            'hCaptcha siteverify request failed',
+            [
+                'exceptionClass' => ConnectException::class,
+                'code' => 0,
+                'status' => null,
+            ]
+        )->shouldHaveBeenCalledOnce();
     }
 }
