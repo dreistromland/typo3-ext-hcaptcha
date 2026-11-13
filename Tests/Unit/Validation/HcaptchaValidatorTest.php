@@ -145,7 +145,17 @@ class HcaptchaValidatorTest extends TestCase
         $result = $subject->validate(1);
         $errors = $result->getErrors();
 
-        $requestFactory->request('https://example.com/siteverify?secret=my_superb_key&response=verification-key-response&remoteip=127.0.0.1', 'POST')->shouldHaveBeenCalled();
+        $requestFactory->request(
+            'https://example.com/siteverify',
+            'POST',
+            [
+                'form_params' => [
+                    'secret' => 'my_superb_key',
+                    'response' => 'verification-key-response',
+                    'remoteip' => '127.0.0.1',
+                ],
+            ]
+        )->shouldHaveBeenCalled();
         self::assertCount(1, $errors);
         self::assertSame($expectedErrorCode, $errors[0]->getCode());
     }

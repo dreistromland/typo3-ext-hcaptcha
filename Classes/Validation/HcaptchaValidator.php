@@ -22,7 +22,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
 use Waldhacker\Hcaptcha\Event\TranslateErrorMessageEvent;
@@ -94,20 +93,19 @@ class HcaptchaValidator extends AbstractValidator
             $ip = $normalizedParams->getRemoteAddress();
         }
 
-        $url = HttpUtility::buildUrl(
+        // Send the secret in the request body, never in the URL: request URLs end up in exception
+        // messages, proxy logs and monitoring, which would expose the secret.
+        $response = $this->getRequestFactory()->request(
+            $this->getConfigurationService()->getVerificationServer(),
+            'POST',
             [
-                'host' => $this->getConfigurationService()->getVerificationServer(),
-                'query' => \http_build_query(
-                    [
-                        'secret' => $this->getConfigurationService()->getPrivateKey(),
-                        'response' => $hcaptchaFormFieldValue,
-                        'remoteip' => $ip,
-                    ]
-                ),
+                'form_params' => [
+                    'secret' => $this->getConfigurationService()->getPrivateKey(),
+                    'response' => $hcaptchaFormFieldValue,
+                    'remoteip' => $ip,
+                ],
             ]
         );
-
-        $response = $this->getRequestFactory()->request($url, 'POST');
 
         $body = (string)$response->getBody();
         $responseArray = json_decode($body, true);
