@@ -35,6 +35,17 @@ class HcaptchaValidator extends AbstractValidator implements LoggerAwareInterfac
 {
     use LoggerAwareTrait;
 
+    /**
+     * siteverify error codes that point to a wrong configuration rather than to the visitor.
+     * They fail every submission, so they are logged; visitor errors stay silent.
+     */
+    private const CONFIGURATION_ERROR_CODES = [
+        'missing-input-secret',
+        'invalid-input-secret',
+        'sitekey-secret-mismatch',
+        'not-using-dummy-passcode',
+    ];
+
     protected $acceptsEmptyValues = false;
 
     /**
@@ -132,7 +143,28 @@ class HcaptchaValidator extends AbstractValidator implements LoggerAwareInterfac
 
         $body = (string)$response->getBody();
         $responseArray = json_decode($body, true);
-        return is_array($responseArray) ? $responseArray : [];
+        if (!is_array($responseArray)) {
+            return [];
+        }
+        $this->logConfigurationErrors($responseArray['error-codes'] ?? []);
+        return $responseArray;
+    }
+
+    /**
+     * @param mixed $errorCodes
+     */
+    private function logConfigurationErrors($errorCodes): void
+    {
+        if ($this->logger === null || !is_array($errorCodes)) {
+            return;
+        }
+        $configurationErrors = array_values(array_intersect($errorCodes, self::CONFIGURATION_ERROR_CODES));
+        if ($configurationErrors !== []) {
+            $this->logger->error(
+                'hCaptcha siteverify rejected the configuration, check site key and secret',
+                ['error-codes' => $configurationErrors]
+            );
+        }
     }
 
     /**

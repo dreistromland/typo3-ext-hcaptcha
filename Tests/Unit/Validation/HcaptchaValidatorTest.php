@@ -215,4 +215,71 @@ class HcaptchaValidatorTest extends TestCase
             ]
         )->shouldHaveBeenCalledOnce();
     }
+
+    public static function validateLogsOnlyConfigurationErrorsDataProvider(): \Generator
+    {
+        yield 'Configuration error is logged' => [
+            'errorCodes' => ['sitekey-secret-mismatch'],
+            'expectedLoggedCodes' => ['sitekey-secret-mismatch'],
+        ];
+
+        yield 'Only the configuration errors of a mixed answer are logged' => [
+            'errorCodes' => ['invalid-input-response', 'invalid-input-secret'],
+            'expectedLoggedCodes' => ['invalid-input-secret'],
+        ];
+
+        yield 'Visitor error is not logged' => [
+            'errorCodes' => ['invalid-input-response'],
+            'expectedLoggedCodes' => null,
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider validateLogsOnlyConfigurationErrorsDataProvider
+     * @covers ::validate
+     * @covers ::isValid
+     * @covers ::validateHcaptcha
+     * @covers ::logConfigurationErrors
+     * @covers ::getConfigurationService
+     * @covers ::getRequestFactory
+     */
+    public function validateLogsOnlyConfigurationErrors(array $errorCodes, ?array $expectedLoggedCodes): void
+    {
+        $subject = $this->getMockBuilder(HcaptchaValidator::class)
+            ->onlyMethods(['translateErrorMessage'])
+            ->getMock();
+        $logger = $this->prophesize(LoggerInterface::class);
+        $subject->setLogger($logger->reveal());
+
+        $requestFactory = $this->prophesize(RequestFactory::class);
+        GeneralUtility::addInstance(RequestFactory::class, $requestFactory->reveal());
+        $normalizedParams = $this->prophesize(NormalizedParams::class);
+        $configurationService = $this->prophesize(ConfigurationService::class);
+        GeneralUtility::addInstance(ConfigurationService::class, $configurationService->reveal());
+        $this->typo3request->getAttribute('normalizedParams')->willReturn($normalizedParams->reveal());
+
+        $normalizedParams->getRemoteAddress()->willReturn('127.0.0.1');
+        $this->typo3request->getParsedBody()->willReturn([
+            'h-captcha-response' => 'verification-key-response',
+        ]);
+
+        $configurationService->getVerificationServer()->willReturn('https://example.com/siteverify');
+        $configurationService->getPrivateKey()->willReturn('my_superb_key');
+
+        $requestFactory->request(Argument::cetera())->willReturn(
+            new Response(200, [], json_encode(['success' => false, 'error-codes' => $errorCodes]))
+        );
+
+        $subject->validate(1);
+
+        if ($expectedLoggedCodes === null) {
+            $logger->error(Argument::cetera())->shouldNotHaveBeenCalled();
+        } else {
+            $logger->error(
+                'hCaptcha siteverify rejected the configuration, check site key and secret',
+                ['error-codes' => $expectedLoggedCodes]
+            )->shouldHaveBeenCalledOnce();
+        }
+    }
 }
